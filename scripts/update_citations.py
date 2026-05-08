@@ -1,63 +1,122 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Manual Update #2: given seed papers, fetch their recent citations.
-Inputs: seeds/important_papers.yaml
-Outputs: data/candidates_citations.json
-Requires: pip install requests pyyaml
-Env var: S2_API_KEY
-"""
-import os, json, time, pathlib, requests, yaml
-from ..scripts.utili import update_json_with_new_entries
+"""Discover papers that cite important seed papers."""
+
+from __future__ import annotations
+
+import argparse
+import pathlib
+
+import yaml
+
+try:
+    from s2_common import CITING_PAPER_FIELDS, S2Client, merge_candidate_file, normalize_paper, normalize_title
+except ImportError:  # Support `python -m scripts.update_citations`.
+    from .s2_common import CITING_PAPER_FIELDS, S2Client, merge_candidate_file, normalize_paper, normalize_title
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-DATA = ROOT / 'data'; DATA.mkdir(exist_ok=True)
-SEEDS = ROOT / 'seeds' / 'important_papers.yaml'
-HEADERS = { 'x-api-key': os.environ.get('S2_API_KEY','') }
+DATA = ROOT / "data"
+DATA.mkdir(exist_ok=True)
+SEEDS = ROOT / "seeds" / "important_papers.yaml"
 
 
-FIELDS = 'title,abstract,authors,venue,year,externalIds,citationCount,url'
+def load_seeds(path: pathlib.Path) -> list[dict]:
+    with open(path, "r", encoding="utf-8") as f:
+        payload = yaml.safe_load(f) or {}
+    return payload.get("seeds") or []
 
 
-with open(SEEDS, 'r', encoding='utf-8') as f:
-    seeds = yaml.safe_load(f)['seeds']
+def resolve_seed(client: S2Client, seed: dict) -> tuple[str | None, str]:
+    title = seed.get("title") or ""
+    if seed.get("s2PaperId"):
+        return seed["s2PaperId"], title
 
-
-out = []
-for s in seeds:
-    query = s.get('title')
-    # 1) find candidate seed paper id
-    sr = requests.get(
-        'https://api.semanticscholar.org/graph/v1/paper/search',
-        params={'query': query, 'limit': 1, 'fields':'paperId,title,year'},
-        headers=HEADERS, timeout=30
+    data = client.get(
+        "/paper/search",
+        params={
+            "query": title,
+            "limit": 5,
+            "fields": "paperId,title,year,externalIds",
+        },
     )
-    sr.raise_for_status(); sdata = sr.json().get('data', [])
-    if not sdata: 
-        continue
-    pid = sdata[0]['paperId']
-    # 2) fetch citations
-    cr = requests.get(
-        f'https://api.semanticscholar.org/graph/v1/paper/{pid}/citations',
-        params={'fields': FIELDS, 'limit': 1000, 'offset': 0}, headers=HEADERS, timeout=30
-    )
-    cr.raise_for_status(); cdata = cr.json().get('data', [])
-    for c in cdata:
-        p = c.get('citingPaper') or {}
-        eid = p.get('externalIds') or {}
-        out.append({
-            'title': p.get('title'),
-            'authors': [a.get('name') for a in (p.get('authors') or [])],
-            'venue': p.get('venue'),
-            'year': p.get('year'),
-            'url': p.get('url') or (('ArXiv' in eid and f"https://arxiv.org/abs/{eid.get('ArXiv')}") or None),
-            'arxivId': eid.get('ArXiv'),
-            'citationCount': p.get('citationCount'),
-            'tags': [],
-            'source': 'semantic_scholar',
-            'seedMatched': s['title']
-        })
-    print(f"Seed '{s['title']}' ({pid}): found {len(cdata)} citations")
-    time.sleep(1.1)
+    candidates = data.get("data") or []
+    if not candidates:
+        print(f"Seed '{title}': no Semantic Scholar match")
+        return None, title
 
-update_json_with_new_entries(pathlib.Path(DATA)/'candidates_citations.json', out)
+    title_norm = normalize_title(title)
+    exact = [p for p in candidates if normalize_title(p.get("title")) == title_norm]
+    chosen = (exact or candidates)[0]
+    if not exact:
+        print(f"Seed '{title}': using closest match '{chosen.get('title')}' ({chosen.get('paperId')})")
+    return chosen.get("paperId"), title
+
+
+def fetch_citations(client: S2Client, seed: dict, max_citations: int) -> list[dict]:
+    seed_id, seed_title = resolve_seed(client, seed)
+    if not seed_id:
+        return []
+
+    out = []
+    offset = 0
+    page_size = 100
+    while len(out) < max_citations:
+        limit = min(page_size, max_citations - len(out))
+        data = client.get(
+            f"/paper/{seed_id}/citations",
+            params={
+                "fields": CITING_PAPER_FIELDS,
+                "limit": limit,
+                "offset": offset,
+            },
+        )
+        items = data.get("data") or []
+        print(f"Seed '{seed_title}' ({seed_id}): fetched {len(items)} citations at offset {offset}")
+        if not items:
+            break
+        discovery = {"source": "citation", "seedTitle": seed_title, "seedPaperId": seed_id}
+        for citation in items:
+            citing = citation.get("citingPaper") or {}
+            out.append(
+                normalize_paper(
+                    citing,
+                    discovery=discovery,
+                    seed_title=seed_title,
+                    seed_paper_id=seed_id,
+                )
+            )
+        next_offset = data.get("next")
+        if next_offset is None:
+            if len(items) < limit:
+                break
+            offset += len(items)
+        else:
+            offset = int(next_offset)
+    return out
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--seeds", default=str(SEEDS))
+    parser.add_argument("--out", default=str(DATA / "candidates_citations.json"))
+    parser.add_argument("--max-citations-per-seed", type=int, default=1000)
+    parser.add_argument("--delay-seconds", type=float, default=1.1)
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    client = S2Client(delay_seconds=args.delay_seconds)
+    seeds = load_seeds(pathlib.Path(args.seeds))
+
+    all_items = []
+    for seed in seeds:
+        all_items.extend(fetch_citations(client, seed, args.max_citations_per_seed))
+
+    merge_candidate_file(pathlib.Path(args.out), all_items)
+    print(f"Discovered {len(all_items)} raw citation candidates from {len(seeds)} seeds")
+
+
+if __name__ == "__main__":
+    main()

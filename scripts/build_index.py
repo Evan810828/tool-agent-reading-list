@@ -3,7 +3,7 @@
 """Build the formal (curated) index from /articles/*.yaml to /data/index.json
 Requires: pip install pyyaml
 """
-import json, pathlib, yaml
+import json, os, pathlib, yaml
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 ART = ROOT / 'articles'
 DATA = ROOT / 'data'; DATA.mkdir(exist_ok=True)
@@ -30,6 +30,17 @@ for y in sorted(ART.glob('*.yaml')):
         rec.setdefault('citationCount', None)
         allp.append(rec)
 
+outfile = DATA / 'index.json'
+if outfile.exists() and os.environ.get('ALLOW_INDEX_SHRINK') != '1':
+    try:
+        existing = json.loads(outfile.read_text(encoding='utf-8'))
+    except json.JSONDecodeError:
+        existing = []
+    if len(existing) > len(allp):
+        raise SystemExit(
+            f"Refusing to shrink data/index.json from {len(existing)} to {len(allp)} entries. "
+            "Add the missing article YAML files, or set ALLOW_INDEX_SHRINK=1 if this is intentional."
+        )
 
-(DATA / 'index.json').write_text(json.dumps(allp, ensure_ascii=False, indent=2))
+outfile.write_text(json.dumps(allp, ensure_ascii=False, indent=2))
 print(f"Built {len(allp)} curated entries → data/index.json")

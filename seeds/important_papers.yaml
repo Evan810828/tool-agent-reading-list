@@ -1,15 +1,15 @@
 seeds:
   - title: "Unbiased Watermark for Large Language Models"
-    s2PaperId: null
+    s2PaperId: 15b0fadb0c703c915ad2caa3b5338415eb1ec0d2
   - title: "A Watermark for Large Language Models"
-    s2PaperId: null
+    s2PaperId: cb5b71a622aff47014d4f28a958679629a8b6363
   - title: "A Watermark for Auto-Regressive Speech Generation Models"
     s2PaperId: null
   - title: "Watermarking Autoregressive Image Generation"
-    s2PaperId: null
+    s2PaperId: 329e676bad92d173f81ec4bab5523ebdf1f40e94
   - title: "Tree-Ring Watermarks: Fingerprints for Diffusion Images that are Invisible and Robust"
-    s2PaperId: null
+    s2PaperId: f653569b131176dfed8842694b5ad2ead5e4b923
   - title: "WATERMARK STEALING IN LARGE LANGUAGE MODELS"
-    s2PaperId: null
+    s2PaperId: c7af46b35061e856aa3332ac2eec6a7ccee0cb35
   - title: "Stealing Watermarks of Large Language Models via Mixed Integer Programming"
-    s2PaperId: null
+    s2PaperId: a6854f91dbad0b39a0289872ac838545a9c18225

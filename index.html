@@ -1,86 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Large Language Model Watermark: Capability and Robustness</title>
-    <link rel="stylesheet" href="./assets/style.css" />
+    <title>LLM Watermark Hub — Capability &amp; Robustness</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="./assets/style.css?v=4" />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 
 <body>
     <header class="site-header">
-        <h1>Large Language Model Watermark: Capability and Robustness</h1>
-        <nav class="tabs">
-            <a href="#reading" data-tab="reading" class="tab active">Reading List</a>
-            <a href="#projects" data-tab="projects" class="tab">Projects</a>
-            <a href="#about" data-tab="about" class="tab">About</a>
-        </nav>
-        <button id="theme-toggle" class="btn small">🌞 Light</button>
-        <div class="github-buttons">
-            <!-- 第一个按钮（GitHub 官方 Star 按钮，带计数） -->
-            <a class="github-button" href="https://github.com/plll4zzx/llm-watermark-robustness.github.io"
-                data-icon="octicon-star" data-size="large" data-show-count="true"
-                aria-label="Star plll4zzx/llm-watermark-robustness.github.io on GitHub">
-                Star
-            </a>
-
-            <!-- 第二个按钮（自定义跳转按钮） -->
-            <a class="custom-star-btn" href="https://github.com/plll4zzx/llm-watermark-robustness.github.io"
-                target="_blank">
-                ⭐ Star on GitHub
-            </a>
+        <div class="header-inner">
+            <a href="#reading" class="site-logo">LLM <span>Watermark</span> Hub</a>
+            <nav class="nav-tabs">
+                <button class="nav-tab active" data-tab="reading">Reading List</button>
+                <button class="nav-tab" data-tab="projects">Projects</button>
+                <button class="nav-tab" data-tab="about">About</button>
+            </nav>
+            <div class="header-actions">
+                <a class="github-button" href="https://github.com/plll4zzx/llm-watermark-robustness.github.io"
+                    data-icon="octicon-star" data-size="large" data-show-count="true"
+                    aria-label="Star plll4zzx/llm-watermark-robustness.github.io on GitHub">Star</a>
+                <button id="theme-toggle" class="theme-btn" title="Toggle theme">🌙</button>
+            </div>
         </div>
-
-        <!-- GitHub 按钮脚本，只需要加载一次 -->
-        <script async defer src="https://buttons.github.io/buttons.js"></script>
-
         <script async defer src="https://buttons.github.io/buttons.js"></script>
     </header>
 
-
     <main id="app">
+        <section id="hero" class="hero">
+            <div class="hero-content">
+                <div class="hero-badge"><span class="hero-badge-dot"></span>Research Hub</div>
+                <h1>Large Language Model Watermark</h1>
+                <p>Tracking the frontier of LLM watermarking research — from embedding schemes and robustness analysis
+                    to adversarial attacks and detection tools.</p>
+                <div class="hero-stats" id="hero-stats"></div>
+                <div class="hero-actions">
+                    <button class="hero-btn hero-btn-primary" id="hero-explore">Explore Papers ↓</button>
+                    <a class="hero-btn hero-btn-ghost"
+                        href="https://github.com/plll4zzx/llm-watermark-robustness.github.io" target="_blank"
+                        rel="noopener">GitHub ↗</a>
+                </div>
+            </div>
+        </section>
+
         <section id="reading" class="panel active">
-            <h2>Reading List</h2>
-            <div class="reading-controls">
-                <button id="show-formal" class="btn">Formal (Curated)</button>
-                <button id="show-latest" class="btn">Latest (Keyword Search)</button>
-                <button id="show-cites" class="btn">Latest (Citations to Seeds)</button>
+            <div id="stats-section" class="stats-wrap"></div>
+            <div class="section">
+                <div class="reveal">
+                    <h2 class="section-title">Reading List</h2>
+                    <p class="section-sub" id="reading-summary"></p>
+                </div>
+                <div class="reveal">
+                    <div class="filter-bar">
+                        <button class="filter-chip active" data-mode="formal">Curated</button>
+                        <button class="filter-chip" data-mode="latest">Latest (Keyword Search)</button>
+                        <button class="filter-chip" data-mode="cites">Latest (Citations to Seeds)</button>
+                        <div class="filter-divider"></div>
+                        <div id="tag-filters" class="tag-filters"></div>
+                        <input id="search-input" class="search-input" type="text"
+                            placeholder="Search papers or authors…" />
+                    </div>
+                </div>
+                <div class="reveal">
+                    <div id="reading-container"></div>
+                </div>
             </div>
-            <div id="reading-summary" class="muted"></div>
-
-            <!-- 🔹 新增 wrapper，里面分左右两栏 -->
-            <div class="reading-layout">
-                <aside id="reading-toc"></aside>
-                <div id="reading-container" class="cards-area"></div>
-            </div>
-
-            <p class="muted small">Formal list comes from <code>data/index.json</code>. Discovery lists come from
-                <code>data/candidates_*.json</code>.
-            </p>
         </section>
 
         <section id="projects" class="panel">
-            <h2>Projects</h2>
-            <div class="reading-layout">
-                <aside id="project-toc"></aside>
-                <div id="project-container" class="cards-area"></div>
+            <div class="section">
+                <div class="reveal">
+                    <h2 class="section-title">Projects</h2>
+                    <p class="section-sub">Research papers, code releases, and tools</p>
+                </div>
+                <div class="reveal">
+                    <div id="project-feature" class="projects-shell"></div>
+                </div>
             </div>
         </section>
 
-
         <section id="about" class="panel">
-            <h2>About</h2>
-            <div id="about-container" class="cards-area"></div>
+            <div class="section">
+                <div id="about-container"></div>
+            </div>
         </section>
     </main>
 
+    <button id="back-to-top" title="Back to top">↑</button>
 
-    <button id="back-to-top">↑ Top</button>
-    <footer class="site-footer">© <span id="year"></span> Large Language Model Watermark: Capability and Robustness
+    <footer class="site-footer">
+        <span>© <span id="year"></span> LLM Watermark Hub</span>
+        <a href="https://github.com/plll4zzx/llm-watermark-robustness.github.io" target="_blank" rel="noopener">GitHub
+            ↗</a>
     </footer>
-    <script src="./assets/app.js?v=1"></script>
+
+    <script src="./assets/app.js?v=4"></script>
 </body>
 
 </html>
