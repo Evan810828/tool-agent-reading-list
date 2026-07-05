@@ -1,0 +1,14 @@
+id: toolformer-2023
+title: "Toolformer: Language Models Can Teach Themselves to Use Tools"
+authors: ["Timo Schick", "Jane Dwivedi-Yu", "Roberto Dessi", "Roberta Raileanu", "Maria Lomeli", "Luke Zettlemoyer", "Nicola Cancedda", "Thomas Scialom"]
+year: 2023
+venue: arXiv
+url: https://arxiv.org/abs/2302.04761
+arxivId: 2302.04761
+tags: [tool use, tool agent, self-supervision]
+abstract: >-
+  Trains language models to decide when and how to call external APIs, forming an important foundation for later
+  tool-agent reliability and verification work.
+source: manual
+addedAt: 2026-07-05
+citationCount: 0

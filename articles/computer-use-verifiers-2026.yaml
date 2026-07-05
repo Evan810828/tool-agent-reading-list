@@ -1,0 +1,14 @@
+id: computer-use-verifiers-2026
+title: "The Art of Building Verifiers for Computer Use Agents"
+authors: ["Corby Rosset", "Pratyusha Sharma", "Andrew Zhao", "Miguel Gonzalez-Fernandez", "Ahmed Awadallah"]
+year: 2026
+venue: arXiv
+url: https://arxiv.org/abs/2604.06240
+arxivId: 2604.06240
+tags: [verification, verifier, agent trajectory]
+abstract: >-
+  Presents design lessons for computer-use-agent verifiers, including rubric construction, process and outcome rewards,
+  failure categorization, and trajectory context management.
+source: manual
+addedAt: 2026-07-05
+citationCount: 0

@@ -1,7 +1,7 @@
 [project]
-name = "llm-watermark-hub"
+name = "tool-agent-reading-list"
 version = "0.1.0"
-description = "Static GitHub Pages site and updater scripts for LLM watermark research."
+description = "Static GitHub Pages site and updater scripts for tool-agent reliability research."
 requires-python = ">=3.9"
 dependencies = [
     "pyyaml>=6.0.2",

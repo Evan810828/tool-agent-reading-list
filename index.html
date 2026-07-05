@@ -4,48 +4,35 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>LLM Watermark Hub — Capability &amp; Robustness</title>
+    <title>Tool Agent Reliability Reading List</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
         href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet" />
-    <link rel="stylesheet" href="./assets/style.css?v=4" />
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="./assets/style.css?v=5" />
 </head>
 
 <body>
     <header class="site-header">
         <div class="header-inner">
-            <a href="#reading" class="site-logo">LLM <span>Watermark</span> Hub</a>
-            <nav class="nav-tabs">
-                <button class="nav-tab active" data-tab="reading">Reading List</button>
-                <button class="nav-tab" data-tab="projects">Projects</button>
-                <button class="nav-tab" data-tab="about">About</button>
-            </nav>
+            <a href="#reading" class="site-logo">Tool Agent <span>Reading List</span></a>
             <div class="header-actions">
-                <a class="github-button" href="https://github.com/plll4zzx/llm-watermark-robustness.github.io"
-                    data-icon="octicon-star" data-size="large" data-show-count="true"
-                    aria-label="Star plll4zzx/llm-watermark-robustness.github.io on GitHub">Star</a>
-                <button id="theme-toggle" class="theme-btn" title="Toggle theme">🌙</button>
+                <button id="theme-toggle" class="theme-btn" title="Toggle theme">Dark</button>
             </div>
         </div>
-        <script async defer src="https://buttons.github.io/buttons.js"></script>
     </header>
 
     <main id="app">
         <section id="hero" class="hero">
             <div class="hero-content">
-                <div class="hero-badge"><span class="hero-badge-dot"></span>Research Hub</div>
-                <h1>Large Language Model Watermark</h1>
-                <p>Tracking the frontier of LLM watermarking research — from embedding schemes and robustness analysis
-                    to adversarial attacks and detection tools.</p>
+                <div class="hero-badge"><span class="hero-badge-dot"></span>Research Reading List</div>
+                <h1>Tool Agent Reliability</h1>
+                <p>Tracking research on reliable tool-using agents, trajectory verification, verifier models,
+                    monitoring, failure detection, and selective prediction for LLM and AI agents.</p>
                 <div class="hero-stats" id="hero-stats"></div>
                 <div class="hero-actions">
-                    <button class="hero-btn hero-btn-primary" id="hero-explore">Explore Papers ↓</button>
-                    <a class="hero-btn hero-btn-ghost"
-                        href="https://github.com/plll4zzx/llm-watermark-robustness.github.io" target="_blank"
-                        rel="noopener">GitHub ↗</a>
+                    <button class="hero-btn hero-btn-primary" id="hero-explore">Explore Papers</button>
                 </div>
             </div>
         </section>
@@ -65,7 +52,7 @@
                         <div class="filter-divider"></div>
                         <div id="tag-filters" class="tag-filters"></div>
                         <input id="search-input" class="search-input" type="text"
-                            placeholder="Search papers or authors…" />
+                            placeholder="Search papers, abstracts, authors, or tags..." />
                     </div>
                 </div>
                 <div class="reveal">
@@ -74,34 +61,15 @@
             </div>
         </section>
 
-        <section id="projects" class="panel">
-            <div class="section">
-                <div class="reveal">
-                    <h2 class="section-title">Projects</h2>
-                    <p class="section-sub">Research papers, code releases, and tools</p>
-                </div>
-                <div class="reveal">
-                    <div id="project-feature" class="projects-shell"></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="about" class="panel">
-            <div class="section">
-                <div id="about-container"></div>
-            </div>
-        </section>
     </main>
 
-    <button id="back-to-top" title="Back to top">↑</button>
+    <button id="back-to-top" title="Back to top">Top</button>
 
     <footer class="site-footer">
-        <span>© <span id="year"></span> LLM Watermark Hub</span>
-        <a href="https://github.com/plll4zzx/llm-watermark-robustness.github.io" target="_blank" rel="noopener">GitHub
-            ↗</a>
+        <span>© <span id="year"></span> Tool Agent Reliability Reading List</span>
     </footer>
 
-    <script src="./assets/app.js?v=4"></script>
+    <script src="./assets/app.js?v=5"></script>
 </body>
 
 </html>

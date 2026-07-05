@@ -1,7 +1,6 @@
+# Tool Agent Reliability Reading List
 
-# LLM Watermark Hub
-
-Static GitHub Pages site with manual updater scripts for LLM watermark research, project notes, and a personal academic profile.
+Static GitHub Pages site with a focused reading list for tool-using LLM/AI agents, especially reliability, verification, verifier models, monitoring, failure detection, agent trajectories, process reward models, and selective prediction.
 
 ## Fast Start
 
@@ -18,71 +17,62 @@ uv sync
 python -m http.server 8000
 ```
 
-4. Strongly recommended: get a Semantic Scholar API key and expose it as `S2_API_KEY`.
-   The scripts include retry/backoff, but unauthenticated requests are easy to rate-limit.
+4. Optional but recommended: set `S2_API_KEY` for Semantic Scholar API access.
 
-## Daily Workflow
+## Workflow
 
 - **Discover new papers**: `uv run python scripts/update_new_papers.py` -> `data/candidates_latest.json`.
 - **Find new citations to seeds**: edit `seeds/important_papers.yaml`, then `uv run python scripts/update_citations.py` -> `data/candidates_citations.json`.
 - **Curate**: for papers you accept, create `/articles/<slug>.yaml` and fill metadata.
-- **Publish formal list**: `uv run python scripts/build_index.py` -> updates `data/index.json`.
-  The builder refuses to shrink an existing index unless you set `ALLOW_INDEX_SHRINK=1`, which protects the published list when only a subset of article YAML files is present locally.
+- **Publish curated list**: `uv run python scripts/build_index.py` -> updates `data/index.json`.
 - **View**: Reading List -> choose `Curated`, `Latest (Keyword Search)`, or `Latest (Citations to Seeds)`.
 
-## Discovery Scripts
+## Default Keyword Queries
 
-The updater scripts share `scripts/s2_common.py`, which handles:
+`scripts/update_new_papers.py` uses:
 
-- Semantic Scholar request throttling, retries, and clearer API errors.
-- Paper normalization into a stable site-friendly schema.
-- Stronger de-duplication by `paperId`, then arXiv ID, DOI, then normalized title/year.
-- Merge behavior that preserves manually added fields such as `tags`, `notes`, `status`, and `decision`.
-- `discoveredBy` provenance so a candidate can record multiple keyword or citation paths.
-
-Useful options:
-
-```bash
-uv run python scripts/update_new_papers.py \
-  --query "LLM watermark" \
-  --max-results-per-query 50
-
-uv run python scripts/update_citations.py \
-  --max-citations-per-seed 500
+```python
+DEFAULT_QUERIES = [
+    "\"tool agent\" reliability",
+    "\"tool agent\" verification",
+    "\"tool agent\" verifier",
+    "\"tool agent\" failure detection",
+    "\"tool agent\" monitoring",
+    "\"LLM agent\" reliability",
+    "\"LLM agent\" verification",
+    "\"LLM agent\" verifier",
+    "\"LLM agent\" failure detection",
+    "\"AI agent\" reliability",
+    "\"AI agent\" verification",
+    "\"agent trajectory\" verification",
+    "\"agent trajectory\" verifier",
+    "\"agent trajectory\" failure detection",
+    "\"process reward model\" \"LLM agent\"",
+    "\"selective prediction\" \"LLM agent\"",
+]
 ```
-
-For citation discovery, prefer adding stable Semantic Scholar paper IDs to `seeds/important_papers.yaml`; title search is used only as a fallback.
 
 ## Content Files
 
 - `articles/*.yaml`: curated reading-list papers.
 - `data/*.json`: generated reading-list data consumed by the static page.
-- `projects/projects.json`: project metadata shown on the Projects tab.
-- `projects/ndss26/char-ndss-en.md`: long-form project description for the featured NDSS project.
+- `seeds/important_papers.yaml`: seed papers for citation-following discovery.
 - `assets/app.js` and `assets/style.css`: client-side rendering and visual design.
 
 ## Paper YAML Schema
-
-Files live under `/articles`.
 
 ```yaml
 id: unique-slug
 title: "Paper title"
 authors: ["Alice", "Bob"]
-year: 2025
-venue: "ArXiv" # or conf/journal
+year: 2026
+venue: "ArXiv"
 url: https://...
-arxivId: 2501.01234 # optional
-tags: [attack, defense, survey, eval]
+arxivId: 2601.01234 # optional
+tags: [verification, monitoring, tool use]
 abstract: >-
   One-paragraph abstract.
 source: manual|semantic_scholar
-addedAt: 2025-09-28
+addedAt: 2026-07-05
 citationCount: 12 # optional
 ```
-
-## Future Ideas
-
-- Per-paper pages generated from YAML to `/papers/<id>.html`.
-- RSS/Atom feed from the curated list.
-- BibTeX/CSV export for curated papers.

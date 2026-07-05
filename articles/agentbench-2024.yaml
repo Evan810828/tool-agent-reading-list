@@ -1,0 +1,14 @@
+id: agentbench-2024
+title: "AgentBench: Evaluating LLMs as Agents"
+authors: ["Xiao Liu", "Hao Yu", "Hanchen Zhang", "Yifan Xu", "Xuanyu Lei", "Hanyu Lai", "Yu Gu", "Hangliang Ding", "Kaiwen Men", "Kejuan Yang", "Shudan Zhang", "Xiang Deng", "Aohan Zeng", "Zhengxiao Du", "Chenhui Zhang", "Sheng Shen", "Tianjun Zhang", "Yu Su", "Huan Sun", "Minlie Huang", "Yuxiao Dong", "Jie Tang"]
+year: 2024
+venue: ICLR
+url: https://arxiv.org/abs/2308.03688
+arxivId: 2308.03688
+tags: [evaluation, failure analysis, benchmark]
+abstract: >-
+  Evaluates LLM agents across multiple interactive environments and identifies common failure modes such as weak
+  long-term reasoning, decision making, and instruction following.
+source: manual
+addedAt: 2026-07-05
+citationCount: 0

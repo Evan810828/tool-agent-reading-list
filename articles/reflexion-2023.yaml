@@ -1,0 +1,14 @@
+id: reflexion-2023
+title: "Reflexion: Language Agents with Verbal Reinforcement Learning"
+authors: ["Noah Shinn", "Federico Cassano", "Edward Berman", "Ashwin Gopinath", "Karthik Narasimhan", "Shunyu Yao"]
+year: 2023
+venue: arXiv
+url: https://arxiv.org/abs/2303.11366
+arxivId: 2303.11366
+tags: [feedback, failure recovery, agent trajectory]
+abstract: >-
+  Uses verbal feedback and episodic memory to let agents reflect on task failures and improve subsequent attempts
+  without model-weight updates.
+source: manual
+addedAt: 2026-07-05
+citationCount: 0

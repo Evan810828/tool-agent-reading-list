@@ -1,0 +1,14 @@
+id: agent-reliability-2026
+title: "Towards a Science of AI Agent Reliability"
+authors: ["Stephan Rabanser", "Sayash Kapoor", "Peter Kirgis", "Kangheng Liu", "Saiteja Utpala", "Arvind Narayanan"]
+year: 2026
+venue: ICML
+url: https://arxiv.org/abs/2602.16666
+arxivId: 2602.16666
+tags: [reliability, evaluation, failure analysis]
+abstract: >-
+  Proposes metrics for consistency, robustness, predictability, and safety to evaluate how AI agents behave, degrade,
+  and fail beyond a single aggregate success score.
+source: manual
+addedAt: 2026-07-05
+citationCount: 0

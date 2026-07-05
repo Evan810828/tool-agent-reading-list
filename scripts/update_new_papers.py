@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Discover new LLM watermark papers by Semantic Scholar keyword search."""
+"""Discover new tool-agent reliability papers by Semantic Scholar keyword search."""
 
 from __future__ import annotations
 
@@ -18,16 +18,22 @@ DATA = ROOT / "data"
 DATA.mkdir(exist_ok=True)
 
 DEFAULT_QUERIES = [
-    "large language model watermark",
-    "\"LLM watermark\"",
-    "\"text watermarking\" \"language model\"",
-    "\"AI-generated text\" watermark",
-    "\"watermark\" \"text generation\"",
-    "\"watermark removal\" \"language model\"",
-    "\"watermark stealing\" \"language model\"",
-    "\"watermark spoofing\" \"language model\"",
-    "\"watermark detection\" \"large language model\"",
-    "\"robust watermark\" \"large language model\"",
+    "\"tool agent\" reliability",
+    "\"tool agent\" verification",
+    "\"tool agent\" verifier",
+    "\"tool agent\" failure detection",
+    "\"tool agent\" monitoring",
+    "\"LLM agent\" reliability",
+    "\"LLM agent\" verification",
+    "\"LLM agent\" verifier",
+    "\"LLM agent\" failure detection",
+    "\"AI agent\" reliability",
+    "\"AI agent\" verification",
+    "\"agent trajectory\" verification",
+    "\"agent trajectory\" verifier",
+    "\"agent trajectory\" failure detection",
+    "\"process reward model\" \"LLM agent\"",
+    "\"selective prediction\" \"LLM agent\"",
 ]
 
 

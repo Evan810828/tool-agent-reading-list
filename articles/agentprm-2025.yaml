@@ -1,0 +1,14 @@
+id: agentprm-2025
+title: "Process Reward Models for LLM Agents: Practical Framework and Directions"
+authors: ["Sanjiban Choudhury"]
+year: 2025
+venue: arXiv
+url: https://arxiv.org/abs/2502.10325
+arxivId: 2502.10325
+tags: [process reward model, agent training, verification]
+abstract: >-
+  Introduces AgentPRM and InversePRM for training LLM agents with process-level reward signals from rollouts or
+  demonstrations, including analysis of reward shaping and reward hacking.
+source: manual
+addedAt: 2026-07-05
+citationCount: 0

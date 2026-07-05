@@ -1,0 +1,14 @@
+id: silent-failure-2026
+title: "Silent Failure in LLM Agent Systems: The Entropy Principle and the Inevitable Disorder of Autonomous Agents"
+authors: ["Dexing Liu"]
+year: 2026
+venue: arXiv
+url: https://arxiv.org/abs/2606.08162
+arxivId: 2606.08162
+tags: [failure detection, monitoring, reliability]
+abstract: >-
+  Studies silent failures in LLM agent systems and frames reliability loss as an operational phenomenon requiring
+  monitoring and deterministic governance.
+source: manual
+addedAt: 2026-07-05
+citationCount: 0

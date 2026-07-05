@@ -1,0 +1,14 @@
+id: webarena-2023
+title: "WebArena: A Realistic Web Environment for Building Autonomous Agents"
+authors: ["Shuyan Zhou", "Frank F. Xu", "Hao Zhu", "Xuhui Zhou", "Robert Lo", "Abishek Sridhar", "Xianyi Cheng", "Tianyue Ou", "Yonatan Bisk", "Daniel Fried", "Uri Alon", "Graham Neubig"]
+year: 2023
+venue: arXiv
+url: https://arxiv.org/abs/2307.13854
+arxivId: 2307.13854
+tags: [tool agent, evaluation, web agent]
+abstract: >-
+  Provides a realistic web environment and long-horizon tasks for measuring autonomous agent task completion and
+  robustness in functional websites.
+source: manual
+addedAt: 2026-07-05
+citationCount: 0
