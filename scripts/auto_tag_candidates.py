@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assign deterministic topic tags to candidate paper JSON files."""
+"""Filter and assign deterministic topic tags to candidate paper JSON files."""
 
 import argparse
 import json
@@ -83,10 +83,26 @@ def auto_tags(item, max_tags):
     return tags[:max_tags]
 
 
-def tag_file(path: pathlib.Path, max_tags: int) -> Tuple[int, int]:
+def paper_year(item):
+    year = item.get("year")
+    if isinstance(year, int):
+        return year
+    if isinstance(year, str) and year.isdigit():
+        return int(year)
+    return None
+
+
+def keep_item(item, min_year):
+    year = paper_year(item)
+    return year is not None and year >= min_year
+
+
+def tag_file(path: pathlib.Path, max_tags: int, min_year: int) -> Tuple[int, int, int]:
     if not path.exists():
-        return 0, 0
+        return 0, 0, 0
     items = json.loads(path.read_text(encoding="utf-8"))
+    before_total = len(items)
+    items = [item for item in items if keep_item(item, min_year)]
     changed = 0
     for item in items:
         before = item.get("tags") or []
@@ -95,21 +111,22 @@ def tag_file(path: pathlib.Path, max_tags: int) -> Tuple[int, int]:
             item["tags"] = after
             changed += 1
     path.write_text(json.dumps(items, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    return len(items), changed
+    return before_total, len(items), changed
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("files", nargs="*", type=pathlib.Path, default=DEFAULT_FILES)
     parser.add_argument("--max-tags", type=int, default=5)
+    parser.add_argument("--min-year", type=int, default=2023)
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
     for path in args.files:
-        total, changed = tag_file(path, args.max_tags)
-        print(f"{path}: tagged {changed} of {total} records")
+        total, kept, changed = tag_file(path, args.max_tags, args.min_year)
+        print(f"{path}: kept {kept} of {total} records from {args.min_year}+; tagged {changed}")
 
 
 if __name__ == "__main__":
