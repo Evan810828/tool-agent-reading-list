@@ -6,7 +6,7 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
 const STATE = {
-    mode: 'formal',
+    mode: 'latest',
     activeTag: null,
     search: '',
     formalPapers: null,
