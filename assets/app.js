@@ -298,6 +298,7 @@ async function loadAndRenderReading() {
     renderStatsSection();
     renderTagFilters();
     renderReadingList();
+    requestAnimationFrame(renderReadingList);
 }
 
 function renderReadingList() {
