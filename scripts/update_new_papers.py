@@ -17,23 +17,106 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 DATA.mkdir(exist_ok=True)
 
+# DEFAULT_QUERIES = [
+#     "\"tool agent\" reliability",
+#     "\"tool agent\" verification",
+#     "\"tool agent\" verifier",
+#     "\"tool agent\" failure detection",
+#     "\"tool agent\" monitoring",
+#     "\"LLM agent\" reliability",
+#     "\"LLM agent\" verification",
+#     "\"LLM agent\" verifier",
+#     "\"LLM agent\" failure detection",
+#     "\"AI agent\" reliability",
+#     "\"AI agent\" verification",
+#     "\"agent trajectory\" verification",
+#     "\"agent trajectory\" verifier",
+#     "\"agent trajectory\" failure detection",
+#     "\"process reward model\" \"LLM agent\"",
+#     "\"selective prediction\" \"LLM agent\"",
+# ]
+
 DEFAULT_QUERIES = [
-    "\"tool agent\" reliability",
-    "\"tool agent\" verification",
-    "\"tool agent\" verifier",
-    "\"tool agent\" failure detection",
-    "\"tool agent\" monitoring",
-    "\"LLM agent\" reliability",
-    "\"LLM agent\" verification",
-    "\"LLM agent\" verifier",
-    "\"LLM agent\" failure detection",
-    "\"AI agent\" reliability",
-    "\"AI agent\" verification",
-    "\"agent trajectory\" verification",
-    "\"agent trajectory\" verifier",
-    "\"agent trajectory\" failure detection",
+    # Budget- and cost-aware agents
+    "\"budget-aware\" \"LLM agent\"",
+    "\"budget-aware\" agent tool use",
+    "\"cost-aware\" \"LLM agent\"",
+    "\"cost-aware\" exploration agent",
+    "\"tool-call budget\"",
+    "\"budget tracker\" agent",
+    "\"time budget\" agentic reasoning",
+    "\"test-time scaling\" agentic tool use",
+    "\"cost-uncertainty tradeoff\" agent",
+    "budget-constrained \"LLM agent\"",
+
+    # Self-awareness and metacognition
+    "\"behavioral self-awareness\" LLM",
+    "LLM \"aware of their\" behaviors",
+    "\"self-aware agent\" tool use",
+    "\"metacognitive learning\" LLM agent",
+    "\"metacognition\" large language model agent",
+    "LLM \"predict their own failures\"",
+    "\"intrinsic metacognitive\" self-improving agent",
+
+    # Confidence estimation and calibration
+    "\"confidence calibration\" \"LLM agent\"",
+    "\"confidence estimation\" multi-turn LLM",
+    "\"agentic confidence calibration\"",
+    "\"miscalibration\" tool-use agent",
+    "\"confidence dichotomy\" tool-use agent",
+    "\"verbalized confidence\" LLM agent",
+    "\"calibrated uncertainty\" language model",
+    "model-internal confidence estimation agent",
+
+    # Uncertainty quantification
+    "\"uncertainty quantification\" \"LLM agent\"",
+    "\"uncertainty quantification\" tool calling",
+    "\"uncertainty quantification\" function calling",
+    "\"uncertainty-aware\" tool-use agent",
+    "\"uncertainty-aware\" clarification-seeking",
+    "\"uncertainty-aware self-correction\" coding agent",
+
+    # Tool-use necessity, overuse, and hallucination
+    "\"tool overuse\" LLM",
+    "\"tool-overuse illusion\"",
+    "agent invoke tools \"epistemically necessary\"",
+    "\"when (not) to call tools\"",
+    "\"tool selection\" hallucination LLM",
+    "\"tool-calling\" hallucination agent",
+    "internal representations hallucination tool selection",
+    "acting less reasoning more tool use",
+
+    # Clarification-seeking and underspecification
+    "\"clarification-seeking\" LLM agent",
+    "\"underspecified\" instructions coding agent",
+    "\"ask or assume\" agent uncertainty",
+    "infeasibility resolution tool-calling agent",
+
+    # Process reward models and step-level verification
+    "\"process reward model\" tool-using agent",
     "\"process reward model\" \"LLM agent\"",
-    "\"selective prediction\" \"LLM agent\"",
+    "step-level process quality tool-using agent",
+    "tool-call reward model LLM",
+    "\"process-level\" verification agent trajectory",
+
+    # Agent reliability, robustness, and safety
+    "\"science of AI agent reliability\"",
+    "\"LLM agent\" robustness noisy environment",
+    "safeguarding mutating steps LLM agent",
+    "\"agent trajectory\" failure detection",
+    "LLM agent consistency robustness predictability safety",
+
+    # Multi-turn dynamics
+    "LLMs \"lost in\" multi-turn conversation",
+    "confidence estimation multi-turn interactions LLM",
+    "persuasion robustness multi-turn LLM",
+
+    # Tool-use / function-calling benchmarks
+    "dual-control benchmark conversational agent tools",
+    "long-horizon tool-use benchmark language agent",
+    "\"function calling\" benchmark LLM agent",
+    "MCP benchmark tool-using LLM agent",
+    "multi-step constrained function calling benchmark",
 ]
 
 
