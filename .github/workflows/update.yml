@@ -33,7 +33,7 @@ jobs:
           S2_API_KEY: ${{ secrets.S2_API_KEY }}
           TASK: ${{ github.event.inputs.task || 'latest' }}
         run: |
-          if [ "$TASK" = "latest" ]; then python scripts/update_new_papers.py; fi
+          if [ "$TASK" = "latest" ]; then python scripts/update_new_papers.py --max-results-per-query 20 --delay-seconds 4.5; fi
           if [ "$TASK" = "citations" ]; then python scripts/update_citations.py; fi
           if [ "$TASK" = "build" ]; then python scripts/build_index.py; fi
       - name: Commit & push
