@@ -33,11 +33,10 @@ function currentModePapers() {
 
 function modeFacetEntries(papers) {
     const counts = {};
-    if (STATE.mode === 'formal') {
-        papers.forEach(paper => (paper.tags || []).forEach(tag => {
-            counts[tag] = (counts[tag] || 0) + 1;
-        }));
-    } else {
+    papers.forEach(paper => (paper.tags || []).forEach(tag => {
+        counts[tag] = (counts[tag] || 0) + 1;
+    }));
+    if (!Object.keys(counts).length && STATE.mode !== 'formal') {
         papers.forEach(paper => (paper.discoveredBy || []).forEach(item => {
             if (!item.query) return;
             counts[item.query] = (counts[item.query] || 0) + 1;
@@ -138,7 +137,7 @@ function renderHero() {
     const years = papers.map(paper => paper.year).filter(Boolean);
     const yearSpan = years.length ? `${Math.min(...years)}-${Math.max(...years)}` : 'Ready';
     const paperLabel = STATE.mode === 'formal' ? 'Curated Papers' : STATE.mode === 'latest' ? 'Latest Papers' : 'Citation Candidates';
-    const facetLabel = STATE.mode === 'formal' ? 'Topics' : 'Queries';
+    const facetLabel = STATE.mode === 'formal' ? 'Topics' : 'Categories';
 
     $('#hero-stats').innerHTML = `
         <div><div class="hero-stat-num">${papers.length.toLocaleString()}</div><div class="hero-stat-label">${paperLabel}</div></div>
@@ -163,7 +162,7 @@ function renderStatsSection() {
         if (paper.venue) venues.add(paper.venue);
     });
     const facetEntries = modeFacetEntries(papers);
-    const facetLabel = STATE.mode === 'formal' ? 'Research Topics' : 'Discovery Queries';
+    const facetLabel = STATE.mode === 'formal' ? 'Research Topics' : 'Auto-Curated Categories';
 
     const yearCounts = {};
     papers.forEach(paper => {
@@ -235,12 +234,9 @@ function renderStatsSection() {
         </div>
     `;
 
-    if (STATE.mode !== 'formal') return;
     $$('.tags-cloud-item', root).forEach(button => {
         button.addEventListener('click', () => {
             STATE.activeTag = button.dataset.tag;
-            STATE.mode = 'formal';
-            $$('.filter-chip[data-mode]').forEach(chip => chip.classList.toggle('active', chip.dataset.mode === 'formal'));
             renderTagFilters();
             renderReadingList();
             $('#reading-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -250,13 +246,9 @@ function renderStatsSection() {
 
 function renderTagFilters() {
     const box = $('#tag-filters');
-    if (STATE.mode !== 'formal') {
-        box.innerHTML = '';
-        return;
-    }
 
     const counts = {};
-    (STATE.formalPapers || []).forEach(paper => (paper.tags || []).forEach(tag => {
+    currentModePapers().forEach(paper => (paper.tags || []).forEach(tag => {
         counts[tag] = (counts[tag] || 0) + 1;
     }));
 
@@ -315,7 +307,7 @@ function renderReadingList() {
     const summary = $('#reading-summary');
     let papers = (STATE.mode === 'formal' ? STATE.formalPapers : STATE.mode === 'latest' ? STATE.latestPapers : STATE.citesPapers) || [];
 
-    if (STATE.activeTag && STATE.mode === 'formal') {
+    if (STATE.activeTag) {
         papers = papers.filter(paper => (paper.tags || []).includes(STATE.activeTag));
     }
 
