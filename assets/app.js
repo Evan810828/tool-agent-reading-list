@@ -210,12 +210,32 @@ function renderStatsSection() {
 
     $$('.tags-cloud-item', root).forEach(button => {
         button.addEventListener('click', () => {
-            STATE.activeTag = button.dataset.tag;
+            setActiveTag(button.dataset.tag);
+            clearSearch();
             renderTagFilters();
             renderReadingList();
             $('#reading-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     });
+}
+
+function clearSearch() {
+    STATE.search = '';
+    const input = $('#search-input');
+    if (input) input.value = '';
+}
+
+function setActiveTag(tag) {
+    STATE.activeTag = tag || null;
+    const allButton = $('#all-filter');
+    if (allButton) allButton.classList.toggle('active', !STATE.activeTag);
+}
+
+function resetFilters() {
+    setActiveTag(null);
+    clearSearch();
+    renderTagFilters();
+    renderReadingList();
 }
 
 function renderTagFilters() {
@@ -238,11 +258,15 @@ function renderTagFilters() {
     $$('.filter-chip[data-tag]', box).forEach(button => {
         button.addEventListener('click', () => {
             const tag = button.dataset.tag;
-            STATE.activeTag = STATE.activeTag === tag ? null : tag;
+            setActiveTag(STATE.activeTag === tag ? null : tag);
+            clearSearch();
             renderTagFilters();
             renderReadingList();
         });
     });
+
+    const allButton = $('#all-filter');
+    if (allButton) allButton.classList.toggle('active', !STATE.activeTag);
 }
 
 function paperCardHTML(paper) {
@@ -349,6 +373,8 @@ function renderReadingList() {
 async function init() {
     initTheme();
     $('#year').textContent = new Date().getFullYear();
+
+    $('#all-filter').addEventListener('click', resetFilters);
 
     let searchTimer;
     $('#search-input').addEventListener('input', event => {
