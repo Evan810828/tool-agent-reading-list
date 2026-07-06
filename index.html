@@ -4,19 +4,19 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tool Agent Reliability Reading List</title>
+    <title>LLM Agent Reading List</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
         href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet" />
-    <link rel="stylesheet" href="./assets/style.css?v=8" />
+    <link rel="stylesheet" href="./assets/style.css?v=9" />
 </head>
 
 <body>
     <header class="site-header">
         <div class="header-inner">
-            <a href="#reading" class="site-logo">Tool Agent <span>Reading List</span></a>
+            <a href="#reading" class="site-logo">LLM Agent <span>Reading List</span></a>
             <div class="header-actions">
                 <button id="theme-toggle" class="theme-btn" title="Toggle theme">Dark</button>
             </div>
@@ -27,9 +27,9 @@
         <section id="hero" class="hero">
             <div class="hero-content">
                 <div class="hero-badge"><span class="hero-badge-dot"></span>Research Reading List</div>
-                <h1>Tool Agent Reliability</h1>
-                <p>Tracking research on reliable tool-using agents, trajectory verification, verifier models,
-                    monitoring, failure detection, and selective prediction for LLM and AI agents.</p>
+                <h1>LLM Agent Research</h1>
+                <p>Tracking recent work on LLM agents, including tool use, planning, agent trajectories,
+                    evaluation, reliability, uncertainty, calibration, benchmarks, and safety.</p>
                 <div class="hero-stats" id="hero-stats"></div>
                 <div class="hero-actions">
                     <button class="hero-btn hero-btn-primary" id="hero-explore">Explore Papers</button>
@@ -46,9 +46,7 @@
                 </div>
                 <div class="reveal">
                     <div class="filter-bar">
-                        <button class="filter-chip" data-mode="formal">Curated</button>
-                        <button class="filter-chip active" data-mode="latest">Latest (Keyword Search)</button>
-                        <button class="filter-chip" data-mode="cites">Latest (Citations to Seeds)</button>
+                        <button class="filter-chip active" type="button">All</button>
                         <div class="filter-divider"></div>
                         <div id="tag-filters" class="tag-filters"></div>
                         <input id="search-input" class="search-input" type="text"
@@ -66,10 +64,10 @@
     <button id="back-to-top" title="Back to top">Top</button>
 
     <footer class="site-footer">
-        <span>© <span id="year"></span> Tool Agent Reliability Reading List</span>
+        <span>© <span id="year"></span> LLM Agent Reading List</span>
     </footer>
 
-    <script src="./assets/app.js?v=8"></script>
+    <script src="./assets/app.js?v=9"></script>
 </body>
 
 </html>

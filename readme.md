@@ -1,6 +1,6 @@
-# Tool Agent Reliability Reading List
+# LLM Agent Reading List
 
-Static GitHub Pages site with a focused reading list for tool-using LLM/AI agents, especially reliability, verification, verifier models, monitoring, failure detection, agent trajectories, process reward models, and selective prediction.
+Static GitHub Pages site with an auto-curated reading list for recent LLM agent research, especially tool use, planning, agent trajectories, evaluation, reliability, uncertainty, calibration, benchmarks, and safety.
 
 ## Fast Start
 
@@ -25,7 +25,7 @@ python -m http.server 8000
 - **Find new citations to seeds**: edit `seeds/important_papers.yaml`, then `uv run python scripts/update_citations.py` -> `data/candidates_citations.json`.
 - **Curate**: for papers you accept, create `/articles/<slug>.yaml` and fill metadata.
 - **Publish curated list**: `uv run python scripts/build_index.py` -> updates `data/index.json`.
-- **View**: Reading List -> choose `Curated`, `Latest (Keyword Search)`, or `Latest (Citations to Seeds)`.
+- **View**: Reading List -> browse `All` papers, filter by auto-curated categories, or search paper metadata and abstracts.
 
 ## Default Keyword Queries
 

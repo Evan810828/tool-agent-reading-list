@@ -1,34 +1,21 @@
 /* ============================================================
-   Tool Agent Reading List — Vanilla JS
+   LLM Agent Reading List — Vanilla JS
    ============================================================ */
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
 const STATE = {
-    mode: 'latest',
     activeTag: null,
     search: '',
-    formalPapers: null,
-    latestPapers: null,
-    citesPapers: null,
+    papers: null,
 };
 
-const DATA_URLS = {
-    formal: 'data/index.json',
-    latest: 'data/candidates_latest.json',
-    cites: 'data/candidates_citations.json',
-};
-
-const PAPER_LIMITS = {
-    latest: 200,
-    cites: 200,
-};
+const DATA_URL = 'data/candidates_latest.json';
+const PAPER_LIMIT = 200;
 
 function currentModePapers() {
-    if (STATE.mode === 'formal') return STATE.formalPapers || [];
-    if (STATE.mode === 'latest') return STATE.latestPapers || [];
-    return STATE.citesPapers || [];
+    return STATE.papers || [];
 }
 
 function modeFacetEntries(papers) {
@@ -36,7 +23,7 @@ function modeFacetEntries(papers) {
     papers.forEach(paper => (paper.tags || []).forEach(tag => {
         counts[tag] = (counts[tag] || 0) + 1;
     }));
-    if (!Object.keys(counts).length && STATE.mode !== 'formal') {
+    if (!Object.keys(counts).length) {
         papers.forEach(paper => (paper.discoveredBy || []).forEach(item => {
             if (!item.query) return;
             counts[item.query] = (counts[item.query] || 0) + 1;
@@ -106,28 +93,15 @@ async function loadJSON(url) {
     return response.json();
 }
 
-async function ensureFormalLoaded() {
-    if (STATE.formalPapers) return STATE.formalPapers;
+async function ensurePapersLoaded() {
+    if (STATE.papers) return STATE.papers;
     try {
-        STATE.formalPapers = await loadJSON(DATA_URLS.formal);
+        STATE.papers = await loadJSON(DATA_URL);
     } catch (error) {
-        STATE.formalPapers = [];
+        STATE.papers = [];
         console.warn(error);
     }
-    return STATE.formalPapers;
-}
-
-async function ensureModeLoaded(mode) {
-    if (mode === 'formal') return ensureFormalLoaded();
-    const key = mode === 'latest' ? 'latestPapers' : 'citesPapers';
-    if (STATE[key]) return STATE[key];
-    try {
-        STATE[key] = await loadJSON(DATA_URLS[mode]);
-    } catch (error) {
-        STATE[key] = [];
-        console.warn(error);
-    }
-    return STATE[key];
+    return STATE.papers;
 }
 
 function renderHero() {
@@ -136,8 +110,8 @@ function renderHero() {
     const facetEntries = modeFacetEntries(papers);
     const years = papers.map(paper => paper.year).filter(Boolean);
     const yearSpan = years.length ? `${Math.min(...years)}-${Math.max(...years)}` : 'Ready';
-    const paperLabel = STATE.mode === 'formal' ? 'Curated Papers' : STATE.mode === 'latest' ? 'Latest Papers' : 'Citation Candidates';
-    const facetLabel = STATE.mode === 'formal' ? 'Topics' : 'Categories';
+    const paperLabel = 'Papers';
+    const facetLabel = 'Categories';
 
     $('#hero-stats').innerHTML = `
         <div><div class="hero-stat-num">${papers.length.toLocaleString()}</div><div class="hero-stat-label">${paperLabel}</div></div>
@@ -162,7 +136,7 @@ function renderStatsSection() {
         if (paper.venue) venues.add(paper.venue);
     });
     const facetEntries = modeFacetEntries(papers);
-    const facetLabel = STATE.mode === 'formal' ? 'Research Topics' : 'Auto-Curated Categories';
+    const facetLabel = 'Auto-Curated Categories';
 
     const yearCounts = {};
     papers.forEach(paper => {
@@ -181,11 +155,11 @@ function renderStatsSection() {
         <div class="section">
             <div class="reveal">
                 <h2 class="section-title">Research Landscape</h2>
-                <p class="section-sub">A focused map of tool-agent reliability, verification, monitoring, and failure detection work.</p>
+                <p class="section-sub">A focused map of recent LLM agent work across tool use, evaluation, reliability, uncertainty, benchmarks, and safety.</p>
             </div>
             <div class="reveal">
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-card-num">${papers.length.toLocaleString()}</div><div class="stat-card-label">${STATE.mode === 'formal' ? 'Curated Papers' : 'Candidate Papers'}</div></div>
+                    <div class="stat-card"><div class="stat-card-num">${papers.length.toLocaleString()}</div><div class="stat-card-label">Papers</div></div>
                     <div class="stat-card"><div class="stat-card-num">${venues.size}</div><div class="stat-card-label">Venues</div></div>
                     <div class="stat-card"><div class="stat-card-num">${facetEntries.length.toLocaleString()}</div><div class="stat-card-label">${facetLabel}</div></div>
                     <div class="stat-card"><div class="stat-card-num">${yearData.length}</div><div class="stat-card-label">Active Years</div></div>
@@ -295,7 +269,7 @@ function paperCardHTML(paper) {
 
 async function loadAndRenderReading() {
     $('#reading-container').innerHTML = `<p class="empty">Loading...</p>`;
-    await ensureModeLoaded(STATE.mode);
+    await ensurePapersLoaded();
     renderHero();
     renderStatsSection();
     renderTagFilters();
@@ -305,7 +279,7 @@ async function loadAndRenderReading() {
 function renderReadingList() {
     const container = $('#reading-container');
     const summary = $('#reading-summary');
-    let papers = (STATE.mode === 'formal' ? STATE.formalPapers : STATE.mode === 'latest' ? STATE.latestPapers : STATE.citesPapers) || [];
+    let papers = currentModePapers();
 
     if (STATE.activeTag) {
         papers = papers.filter(paper => (paper.tags || []).includes(STATE.activeTag));
@@ -329,17 +303,15 @@ function renderReadingList() {
         return (b.citationCount || 0) - (a.citationCount || 0);
     });
 
-    const limit = PAPER_LIMITS[STATE.mode];
     const total = papers.length;
     let truncated = false;
-    if (limit && papers.length > limit && !search) {
-        papers = papers.slice(0, limit);
+    if (PAPER_LIMIT && papers.length > PAPER_LIMIT && !search) {
+        papers = papers.slice(0, PAPER_LIMIT);
         truncated = true;
     }
 
-    const modeLabel = STATE.mode === 'formal' ? 'Curated' : STATE.mode === 'latest' ? 'Latest (Keyword Search)' : 'Latest (Citations to Seeds)';
     const tagSuffix = STATE.activeTag ? ` / #${STATE.activeTag}` : '';
-    summary.textContent = `${modeLabel}${tagSuffix}: ${total.toLocaleString()} papers${truncated ? ` (showing ${papers.length})` : ''}`;
+    summary.textContent = `All${tagSuffix}: ${total.toLocaleString()} papers${truncated ? ` (showing ${papers.length})` : ''}`;
 
     if (!papers.length) {
         container.innerHTML = `<p class="empty">No papers match your filters.</p>`;
@@ -378,17 +350,6 @@ async function init() {
     initTheme();
     $('#year').textContent = new Date().getFullYear();
 
-    $$('.filter-chip[data-mode]').forEach(button => {
-        button.addEventListener('click', async () => {
-            const mode = button.dataset.mode;
-            if (STATE.mode === mode) return;
-            STATE.mode = mode;
-            STATE.activeTag = null;
-            $$('.filter-chip[data-mode]').forEach(chip => chip.classList.toggle('active', chip.dataset.mode === mode));
-            await loadAndRenderReading();
-        });
-    });
-
     let searchTimer;
     $('#search-input').addEventListener('input', event => {
         clearTimeout(searchTimer);
@@ -408,7 +369,6 @@ async function init() {
     }, { passive: true });
     backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-    await ensureFormalLoaded();
     await loadAndRenderReading();
     observeReveal();
 }
