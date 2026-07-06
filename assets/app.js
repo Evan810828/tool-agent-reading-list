@@ -25,6 +25,27 @@ const PAPER_LIMITS = {
     cites: 200,
 };
 
+function currentModePapers() {
+    if (STATE.mode === 'formal') return STATE.formalPapers || [];
+    if (STATE.mode === 'latest') return STATE.latestPapers || [];
+    return STATE.citesPapers || [];
+}
+
+function modeFacetEntries(papers) {
+    const counts = {};
+    if (STATE.mode === 'formal') {
+        papers.forEach(paper => (paper.tags || []).forEach(tag => {
+            counts[tag] = (counts[tag] || 0) + 1;
+        }));
+    } else {
+        papers.forEach(paper => (paper.discoveredBy || []).forEach(item => {
+            if (!item.query) return;
+            counts[item.query] = (counts[item.query] || 0) + 1;
+        }));
+    }
+    return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+}
+
 function initTheme() {
     const saved = localStorage.getItem('agent-reading-theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -111,23 +132,24 @@ async function ensureModeLoaded(mode) {
 }
 
 function renderHero() {
-    const papers = STATE.formalPapers || [];
+    const papers = currentModePapers();
     const totalCites = papers.reduce((sum, paper) => sum + (paper.citationCount || 0), 0);
-    const tags = new Set();
-    papers.forEach(paper => (paper.tags || []).forEach(tag => tags.add(tag)));
+    const facetEntries = modeFacetEntries(papers);
     const years = papers.map(paper => paper.year).filter(Boolean);
     const yearSpan = years.length ? `${Math.min(...years)}-${Math.max(...years)}` : 'Ready';
+    const paperLabel = STATE.mode === 'formal' ? 'Curated Papers' : STATE.mode === 'latest' ? 'Latest Papers' : 'Citation Candidates';
+    const facetLabel = STATE.mode === 'formal' ? 'Topics' : 'Queries';
 
     $('#hero-stats').innerHTML = `
-        <div><div class="hero-stat-num">${papers.length}</div><div class="hero-stat-label">Curated Papers</div></div>
+        <div><div class="hero-stat-num">${papers.length.toLocaleString()}</div><div class="hero-stat-label">${paperLabel}</div></div>
         <div><div class="hero-stat-num">${totalCites.toLocaleString()}</div><div class="hero-stat-label">Citations</div></div>
-        <div><div class="hero-stat-num">${tags.size}</div><div class="hero-stat-label">Topics</div></div>
+        <div><div class="hero-stat-num">${facetEntries.length.toLocaleString()}</div><div class="hero-stat-label">${facetLabel}</div></div>
         <div><div class="hero-stat-num">${escapeHtml(yearSpan)}</div><div class="hero-stat-label">Coverage</div></div>
     `;
 }
 
 function renderStatsSection() {
-    const papers = STATE.formalPapers || [];
+    const papers = currentModePapers();
     const root = $('#stats-section');
     if (!papers.length) {
         root.innerHTML = '';
@@ -140,6 +162,8 @@ function renderStatsSection() {
         (paper.tags || []).forEach(tag => tags.add(tag));
         if (paper.venue) venues.add(paper.venue);
     });
+    const facetEntries = modeFacetEntries(papers);
+    const facetLabel = STATE.mode === 'formal' ? 'Research Topics' : 'Discovery Queries';
 
     const yearCounts = {};
     papers.forEach(paper => {
@@ -147,12 +171,6 @@ function renderStatsSection() {
     });
     const yearData = Object.entries(yearCounts).sort((a, b) => Number(a[0]) - Number(b[0]));
     const yearMax = Math.max(1, ...yearData.map(([, count]) => count));
-
-    const tagCounts = {};
-    papers.forEach(paper => (paper.tags || []).forEach(tag => {
-        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-    }));
-    const tagEntries = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
 
     const top = [...papers]
         .filter(paper => (paper.citationCount || 0) > 0)
@@ -168,9 +186,9 @@ function renderStatsSection() {
             </div>
             <div class="reveal">
                 <div class="stats-grid">
-                    <div class="stat-card"><div class="stat-card-num">${papers.length}</div><div class="stat-card-label">Curated Papers</div></div>
+                    <div class="stat-card"><div class="stat-card-num">${papers.length.toLocaleString()}</div><div class="stat-card-label">${STATE.mode === 'formal' ? 'Curated Papers' : 'Candidate Papers'}</div></div>
                     <div class="stat-card"><div class="stat-card-num">${venues.size}</div><div class="stat-card-label">Venues</div></div>
-                    <div class="stat-card"><div class="stat-card-num">${tags.size}</div><div class="stat-card-label">Research Topics</div></div>
+                    <div class="stat-card"><div class="stat-card-num">${facetEntries.length.toLocaleString()}</div><div class="stat-card-label">${facetLabel}</div></div>
                     <div class="stat-card"><div class="stat-card-num">${yearData.length}</div><div class="stat-card-label">Active Years</div></div>
                 </div>
             </div>
@@ -186,9 +204,9 @@ function renderStatsSection() {
                         `).join('')}
                     </div>
                     <div class="chart-container">
-                        <div class="chart-title">Research Topics</div>
+                        <div class="chart-title">${facetLabel}</div>
                         <div class="tags-cloud">
-                            ${tagEntries.map(([tag, count]) => `
+                            ${facetEntries.slice(0, 30).map(([tag, count]) => `
                                 <button class="tags-cloud-item" data-tag="${escapeHtml(tag)}" type="button">${escapeHtml(tag)} <span>(${count})</span></button>
                             `).join('')}
                         </div>
@@ -217,6 +235,7 @@ function renderStatsSection() {
         </div>
     `;
 
+    if (STATE.mode !== 'formal') return;
     $$('.tags-cloud-item', root).forEach(button => {
         button.addEventListener('click', () => {
             STATE.activeTag = button.dataset.tag;
@@ -285,6 +304,8 @@ function paperCardHTML(paper) {
 async function loadAndRenderReading() {
     $('#reading-container').innerHTML = `<p class="empty">Loading...</p>`;
     await ensureModeLoaded(STATE.mode);
+    renderHero();
+    renderStatsSection();
     renderTagFilters();
     renderReadingList();
 }
@@ -396,8 +417,6 @@ async function init() {
     backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
     await ensureFormalLoaded();
-    renderHero();
-    renderStatsSection();
     await loadAndRenderReading();
     observeReveal();
 }
