@@ -8,7 +8,17 @@ on:
         default: latest
         type: choice
         options: [latest, citations, build]
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/update.yml"
+      - "scripts/update_new_papers.py"
+      - "scripts/update_citations.py"
+      - "scripts/build_index.py"
+      - "seeds/important_papers.yaml"
 
+permissions:
+  contents: write
 
 jobs:
   run:
@@ -21,14 +31,17 @@ jobs:
       - name: Run task
         env:
           S2_API_KEY: ${{ secrets.S2_API_KEY }}
+          TASK: ${{ github.event.inputs.task || 'latest' }}
         run: |
-          if [ "${{ github.event.inputs.task }}" = "latest" ]; then python scripts/update_new_papers.py; fi
-          if [ "${{ github.event.inputs.task }}" = "citations" ]; then python scripts/update_citations.py; fi
-          if [ "${{ github.event.inputs.task }}" = "build" ]; then python scripts/build_index.py; fi
+          if [ "$TASK" = "latest" ]; then python scripts/update_new_papers.py; fi
+          if [ "$TASK" = "citations" ]; then python scripts/update_citations.py; fi
+          if [ "$TASK" = "build" ]; then python scripts/build_index.py; fi
       - name: Commit & push
+        env:
+          TASK: ${{ github.event.inputs.task || 'latest' }}
         run: |
           git config user.name github-actions
           git config user.email actions@github.com
           git add -A
-          git commit -m "ci: ${{ github.event.inputs.task }} run" || echo "No changes"
+          git commit -m "ci: $TASK run" || echo "No changes"
           git push
